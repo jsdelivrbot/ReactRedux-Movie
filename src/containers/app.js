@@ -5,7 +5,7 @@ import VideoDetail from '../components/video-detail'
 import Video from '../components/video'
 import axios from 'axios'
 
-
+//Const API
 const API_END_POINT = "https://api.themoviedb.org/3/"
 const POPULAR_MOVIES_URL = "discover/movie?language=fr&sort_by=popularity.desc&include_adult=false&append_to_response=images"
 const API_KEY = "api_key=49a7c834e4ee728f7194deb5586b9d39"
@@ -22,6 +22,8 @@ class App extends Component {
         this.initMovies();
     }
 
+
+    //Request + setState list film populaire & le best film
     initMovies (){
         axios.get(`${API_END_POINT}${POPULAR_MOVIES_URL}&${API_KEY}`).then(function(response){
             this.setState({movieList:response.data.results.slice(1,6),currentMovie:response.data.results[0]}, function(){
@@ -30,8 +32,9 @@ class App extends Component {
         }.bind(this));
     }
 
-    applyVideoToCurrentMovie () {
 
+    //Request + setState vidéo ID du film le plus populaire
+    applyVideoToCurrentMovie () {
         axios.get(`${API_END_POINT}movie/${this.state.currentMovie.id}?${API_KEY}&append_to_response=videos&include_adult=false`).then(function(response){
             const youtubeKey = response.data.videos.results[0].key;
             let newCurrentMovieState = this.state.currentMovie;
@@ -40,11 +43,19 @@ class App extends Component {
         }.bind(this));
     }
 
+    receiveCallBack (movie){
+        this.setState({currentMovie:movie},function () {
+            this.applyVideoToCurrentMovie();
+        })
+    }
+
+
     render () {
 
+        //Attente du retour de request async
         const renderVideoList = () => {
             if (this.state.movieList.length>=5) {
-                return <VideoList movieList={this.state.movieList}/>
+                return <VideoList movieList={this.state.movieList} callback={this.receiveCallBack.bind(this)}/>
             }
         }
 
