@@ -25,7 +25,6 @@ class SearchBar extends Component{
         )
     }
 
-
     //Entrée dans searchBar
     handleChange(event){
         this.setState({searchText:event.target.value});
@@ -47,8 +46,6 @@ class SearchBar extends Component{
         this.props.callback(this.state.searchText);
         this.setState({lockRequest:false})
     }
-
-
 }
 
 export default SearchBar

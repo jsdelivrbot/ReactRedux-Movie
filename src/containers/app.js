@@ -27,7 +27,7 @@ class App extends Component {
     }
 
 
-    //Request + setState list film populaire & le best film
+    //Request API + setState list film populaire & le best film
     initMovies (){
         axios.get(`${API_END_POINT}${POPULAR_MOVIES_URL}&${API_KEY}`).then(function(response){
             this.setState({movieList:response.data.results.slice(1,6),currentMovie:response.data.results[0]}, function(){
@@ -37,7 +37,7 @@ class App extends Component {
     }
 
 
-    //Request + setState vidéo ID du film le plus populaire
+    //Request API + setState de vidéo ID du film le plus populaire
     applyVideoToCurrentMovie () {
         axios.get(`${API_END_POINT}movie/${this.state.currentMovie.id}?${API_KEY}&append_to_response=videos&include_adult=false`).then(function(response){
             const youtubeKey = response.data.videos.results[0].key;
@@ -91,7 +91,6 @@ class App extends Component {
 
 
     render () {
-
         //Attente du retour de request async
         const renderVideoList = () => {
             if (this.state.movieList.length>=5) {
@@ -105,7 +104,6 @@ class App extends Component {
                     <SearchBar callback={this.onClickSearch.bind(this)}/>
                 </div>
                 
-
                 <div className="row">
                     <div className="col-md-8">
                         <Video videoId={this.state.currentMovie.videoId} />
