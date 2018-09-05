@@ -16,7 +16,10 @@ class App extends Component {
 
     constructor (props) {
         super(props)
-        this.state = {movieList:{},currentMovie:{}}
+        this.state = {
+            movieList:{},
+            currentMovie:{}
+        }
     }
 
     componentWillMount () {
