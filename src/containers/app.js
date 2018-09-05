@@ -49,8 +49,16 @@ class App extends Component {
     onClickListItem (movie){
         this.setState({currentMovie:movie},function () {
             this.applyVideoToCurrentMovie();
+            this.setRecommendation();
         })
     }
+
+    setRecommendation () {
+        axios.get(`${API_END_POINT}movie/${this.state.currentMovie.id}/recommendations?${API_KEY}&language=fr`).then(function(response){
+            this.setState({movieList:response.data.results.slice(0,5)});
+        }.bind(this));
+    }
+
 
     //Modifie le currentMovie par la value de la searchBar
     onClickSearch (searchText){
@@ -66,6 +74,7 @@ class App extends Component {
                         //Film de SearchBar -> CurrentMovie
                         this.setState({currentMovie: response.data.results[0]},() => {
                             this.applyVideoToCurrentMovie();
+                            this.setRecommendation();
                         })
                     }
                 }
