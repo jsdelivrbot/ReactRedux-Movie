@@ -8,6 +8,7 @@ import axios from 'axios'
 //Const API
 const API_END_POINT = "https://api.themoviedb.org/3/"
 const POPULAR_MOVIES_URL = "discover/movie?language=fr&sort_by=popularity.desc&include_adult=false&append_to_response=images"
+const SEARCH_URL = "search/movie?language=fr&include_adult=false"
 const API_KEY = "api_key=49a7c834e4ee728f7194deb5586b9d39"
 
 
@@ -43,10 +44,37 @@ class App extends Component {
         }.bind(this));
     }
 
-    receiveCallBack (movie){
+
+    //Modifie le Current movie par le clic
+    onClickListItem (movie){
         this.setState({currentMovie:movie},function () {
             this.applyVideoToCurrentMovie();
         })
+    }
+
+    //Modifie le currentMovie par la value de la searchBar
+    onClickSearch (searchText){
+        //Si il y a une valeur dans la search bar
+        if (searchText) {
+            //request API
+            axios.get(`${API_END_POINT}${SEARCH_URL}&${API_KEY}&query=${searchText}`).then(function(response){
+
+                //Si réponse API
+                if (response.data && response.data.results[0]) {
+                    //Si réponse API différent de currentMovie
+                    if (response.data.results[0].id != this.state.currentMovie.id) {
+                        //Film de SearchBar -> CurrentMovie
+                        this.setState({currentMovie: response.data.results[0]},() => {
+                            this.applyVideoToCurrentMovie();
+                        })
+                    }
+                }
+
+                this.setState({movieList:response.data.results.slice(1,6),currentMovie:response.data.results[0]}, function(){
+                    this.applyVideoToCurrentMovie();
+                });
+            }.bind(this));    
+        }
     }
 
 
@@ -55,14 +83,14 @@ class App extends Component {
         //Attente du retour de request async
         const renderVideoList = () => {
             if (this.state.movieList.length>=5) {
-                return <VideoList movieList={this.state.movieList} callback={this.receiveCallBack.bind(this)}/>
+                return <VideoList movieList={this.state.movieList} callback={this.onClickListItem.bind(this)}/>
             }
         }
 
         return (
             <div>
                 <div className="search_bar">
-                    <SearchBar/>
+                    <SearchBar callback={this.onClickSearch.bind(this)}/>
                 </div>
                 
 
